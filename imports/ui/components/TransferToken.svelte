@@ -1,18 +1,18 @@
 <script>
     import {ethers} from 'ethers';
     import { TOKEN_ADDRESS, TOKEN_ABI} from '../../api/contract';
-    export let accAddress
-    export let signer
-    let transferTo
-    let amount
+    export let accAddress;
+    export let signer;
+    let transferTo;
+    let amount;
 
     async function transferTokens() {
         try {
-            const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer)
-            const tx = await tokenContract.transfer(transferTo, amount)
-            await tx.wait()
+            const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
+            const tx = await tokenContract.transfer(transferTo, amount);
+            await tx.wait();
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
     }
 </script>
