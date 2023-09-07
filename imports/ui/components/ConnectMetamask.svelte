@@ -1,4 +1,6 @@
 <script>
+  import TransferToken from "./TransferToken.svelte";
+  import { fade } from 'svelte/transition';
   import { ethers } from "ethers";
   import { onMount } from "svelte";
   import Loader from "./helpers/Loader.svelte";
@@ -50,7 +52,9 @@
 
 <div class="container">
   {#if isConnected}
-    <p>Successfully connected to MetaMask, address: {accAddress}</p>
+  <div transition:fade={{ delay: 250, duration: 300 }}>
+    <TransferToken {accAddress}/>
+  </div>
   {:else}
     <div class="connect">
       <img
