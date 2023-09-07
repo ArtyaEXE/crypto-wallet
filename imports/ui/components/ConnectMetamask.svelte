@@ -53,7 +53,9 @@
 <div class="container">
   {#if isConnected}
   <div transition:fade={{ delay: 250, duration: 300 }}>
-    <TransferToken {accAddress}/>
+    <TransferToken 
+    {signer}
+    {accAddress}/>
   </div>
   {:else}
     <div class="connect">
