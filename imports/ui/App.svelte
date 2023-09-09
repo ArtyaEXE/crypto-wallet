@@ -1,7 +1,7 @@
 <script>
-  import ConnectMetamask from "./components/ConnectMetamask.svelte";
+  import MainPage from "./components/MainPage.svelte";
 </script>
 
 <main>
-  <ConnectMetamask />
+  <MainPage />
 </main>

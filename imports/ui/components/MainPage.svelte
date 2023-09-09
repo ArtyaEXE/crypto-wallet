@@ -1,14 +1,18 @@
 <script>
   import TransferToken from "./TransferToken.svelte";
-  import { fade } from 'svelte/transition';
+  import SuccessMessage from "../utils/SuccessMessage.svelte";
+  import ErrorMessage from "../utils/ErrorMessage.svelte";
+  import { fade } from "svelte/transition";
   import { ethers } from "ethers";
   import { onMount } from "svelte";
-  import Loader from "./helpers/Loader.svelte";
+  import Loader from "../utils/Loader.svelte";
   let isConnected = false;
   let accAddress = localStorage.getItem("accAddress");
   let provider;
   let signer;
   let isLoading = false;
+  let err;
+  let success;
 
   async function connectToMetamask() {
     try {
@@ -20,9 +24,16 @@
       signer = provider.getSigner();
 
       window.ethereum.on("accountsChanged", handleAccountsChanged);
+      success = "Connected to MetaMask successfully";
     } catch (error) {
-      console.error(error);
+      err = error;
+      setTimeout(() => {
+        err = "";
+      }, 3000);
     }
+    setTimeout(() => {
+      success = "";
+    }, 3000);
     isLoading = false;
   }
 
@@ -50,13 +61,25 @@
   });
 </script>
 
+{#if success}
+  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
+    <SuccessMessage {success} />
+  </div>
+{/if}
+
+{#if err}
+  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
+    <ErrorMessage
+      err={err.message || "Error connecting to MetaMask. Please try again."}
+    />
+  </div>
+{/if}
+
 <div class="container">
   {#if isConnected}
-  <div transition:fade={{ delay: 250, duration: 300 }}>
-    <TransferToken 
-    {signer}
-    {accAddress}/>
-  </div>
+    <div transition:fade={{ delay: 0, duration: 300 }}>
+      <TransferToken {signer} {accAddress} />
+    </div>
   {:else}
     <div class="connect">
       <img
@@ -77,6 +100,11 @@
 </div>
 
 <style>
+  .alert {
+    right: 10vw;
+    top: -30vh;
+    position: absolute;
+  }
   .container {
     margin-top: 40vh;
     justify-content: center;
