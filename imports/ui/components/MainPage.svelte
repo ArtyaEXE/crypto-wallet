@@ -27,6 +27,9 @@
       success = "Connected to MetaMask successfully";
     } catch (error) {
       err = error;
+      if (err.code === -32002) {
+        err.message = "Check MetaMask";
+      }
       setTimeout(() => {
         err = "";
       }, 3000);
@@ -77,9 +80,7 @@
 
 <div class="container">
   {#if isConnected}
-    <div transition:fade={{ delay: 0, duration: 300 }}>
-      <TransferToken {signer} {accAddress} />
-    </div>
+    <TransferToken {signer} {accAddress} />
   {:else}
     <div class="connect">
       <img
