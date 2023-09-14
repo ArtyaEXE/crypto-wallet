@@ -102,11 +102,13 @@
 </div>
 
 <style>
-  .alert {
-    right: 10vw;
-    top: -30vh;
-    position: absolute;
-  }
+
+.alert {
+  right: 10vw;
+  top: -30vh;
+  position: absolute;
+}
+  
   .container {
     margin-top: 30vh;
     justify-content: center;

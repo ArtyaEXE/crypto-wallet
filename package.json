@@ -12,7 +12,8 @@
     "bootstrap-icons": "^1.10.5",
     "ethers": "^5.7.1",
     "meteor-node-stubs": "^1.2.5",
-    "svelte": "^3.54.0"
+    "svelte": "^3.54.0",
+    "svelte-routing": "^2.3.0"
   },
   "devDependencies": {
     "svelte-preprocess": "^5.0.0"

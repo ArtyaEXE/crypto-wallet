@@ -22,14 +22,18 @@
       const token = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider);
       const tx = await token.connect(signer).transfer(to, amount);
       const result = await tx.wait();
-      console.log(result)
+      success = 'Success';
     } catch (error) {
       err = error;
-      err = 'Something went wrong, please try again';
       setTimeout(() => {
         err = "";
       }, 3000);
     }
+    setTimeout(() => {
+        success = "";
+      }, 3000);
+      to = '';
+      amount = '';
     isLoading = false;
   }
   onMount(async() => {
@@ -45,6 +49,12 @@
 {#if err}
 <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
 <ErrorMessage {err}/>
+</div>
+{/if}
+
+{#if success}
+<div transition:fade={{ delay: 0, duration: 300 }} class="alert">
+<SuccessMessage {success}/>
 </div>
 {/if}
 
@@ -82,12 +92,12 @@
 </div>
 
 <style>
-  .alert {
-    right: 10vw;
-    top: -30vh;
-    position: absolute;
-  }
 
+.alert {
+  right: 10vw;
+  top: -30vh;
+  position: absolute;
+}
   .address {
     font-weight: 700;
     font-size: 24px;
