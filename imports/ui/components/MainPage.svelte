@@ -6,8 +6,9 @@
   import { ethers } from "ethers";
   import { onMount } from "svelte";
   import Loader from "../utils/Loader.svelte";
+
   let isConnected = false;
-  let accAddress = localStorage.getItem("accAddress");
+  let address = localStorage.getItem("address");
   let provider;
   let signer;
   let isLoading = false;
@@ -18,9 +19,9 @@
     try {
       isLoading = true;
       provider = new ethers.providers.Web3Provider(window.ethereum);
-      accAddress = await provider.send("eth_requestAccounts", []);
+      address = await provider.send("eth_requestAccounts", []);
       isConnected = true;
-      localStorage.setItem("accAddress", accAddress);
+      localStorage.setItem("address", address);
       signer = provider.getSigner();
 
       window.ethereum.on("accountsChanged", handleAccountsChanged);
@@ -28,7 +29,7 @@
     } catch (error) {
       err = error;
       if (err.code === -32002) {
-        err.message = "Check MetaMask";
+        err.message = "Check MetaMask and try again";
       }
       setTimeout(() => {
         err = "";
@@ -43,18 +44,18 @@
   function handleAccountsChanged(newAccounts) {
     if (newAccounts.length === 0) {
       isConnected = false;
-      accAddress = undefined;
-      localStorage.removeItem("accAddress");
+      address = undefined;
+      localStorage.removeItem("address");
       provider = undefined;
       signer = undefined;
     } else {
-      accAddress = newAccounts[0];
-      localStorage.setItem("accAddress", accAddress);
+      address = newAccounts[0];
+      localStorage.setItem("address", address);
     }
   }
 
   onMount(async () => {
-    if (localStorage.getItem("accAddress") !== null) {
+    if (localStorage.getItem("address") !== null) {
       isConnected = true;
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
@@ -80,7 +81,7 @@
 
 <div class="container">
   {#if isConnected}
-    <TransferToken {signer} {accAddress} />
+    <TransferToken {signer} {address} {provider} />
   {:else}
     <div class="connect">
       <img
@@ -107,7 +108,7 @@
     position: absolute;
   }
   .container {
-    margin-top: 40vh;
+    margin-top: 30vh;
     justify-content: center;
   }
 
