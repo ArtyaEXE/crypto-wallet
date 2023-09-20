@@ -1,10 +1,10 @@
-<script>
+<!-- <script>
   import TransferToken from "./TransferToken.svelte";
   import SuccessMessage from "../utils/SuccessMessage.svelte";
   import ErrorMessage from "../utils/ErrorMessage.svelte";
   import { fade } from "svelte/transition";
   import { ethers } from "ethers";
-  import { onMount } from "svelte";
+
   import Loader from "../utils/Loader.svelte";
 
   let isConnected = false;
@@ -102,13 +102,12 @@
 </div>
 
 <style>
+  .alert {
+    right: 10vw;
+    top: -30vh;
+    position: absolute;
+  }
 
-.alert {
-  right: 10vw;
-  top: -30vh;
-  position: absolute;
-}
-  
   .container {
     margin-top: 30vh;
     justify-content: center;
@@ -123,4 +122,4 @@
   img {
     margin-bottom: 1rem;
   }
-</style>
+</style> -->

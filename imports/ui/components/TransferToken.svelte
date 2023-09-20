@@ -1,7 +1,7 @@
 <script>
   import { ethers } from "ethers";
   import { TOKEN_ADDRESS, TOKEN_ABI } from "../../api/contract";
-  import { onMount } from 'svelte'
+  import { onMount } from "svelte";
   import { fade } from "svelte/transition";
   import LoaderDark from "../utils/LoaderDark.svelte";
   import ErrorMessage from "../utils/ErrorMessage.svelte";
@@ -15,14 +15,17 @@
   let success;
   let to;
   let amount;
+  let network;
 
   async function transferTokens() {
     try {
       isLoading = true;
       const token = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider);
-      const tx = await token.connect(signer).transfer(to, amount);
+      const tx = await token
+        .connect(signer)
+        .transfer(to, ethers.utils.parseUnits(amount, 18));
       const result = await tx.wait();
-      success = 'Success';
+      success = "Successful transaction";
     } catch (error) {
       err = error;
       setTimeout(() => {
@@ -30,32 +33,32 @@
       }, 3000);
     }
     setTimeout(() => {
-        success = "";
-      }, 3000);
-      to = '';
-      amount = '';
+      success = "";
+    }, 3000);
+    to = "";
+    amount = "";
     isLoading = false;
   }
-  onMount(async() => {
+  onMount(async () => {
     try {
-    const network = await provider.getNetwork();
-    console.log(network)
-  } catch (error) {
-    console.error(error);
-  }
-  })
+      network = await provider.getNetwork();
+      console.log(network);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 </script>
 
 {#if err}
-<div transition:fade={{ delay: 0, duration: 300 }} class="alert">
-<ErrorMessage {err}/>
-</div>
+  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
+    <ErrorMessage {err} />
+  </div>
 {/if}
 
 {#if success}
-<div transition:fade={{ delay: 0, duration: 300 }} class="alert">
-<SuccessMessage {success}/>
-</div>
+  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
+    <SuccessMessage {success} />
+  </div>
 {/if}
 
 <div class="card">
@@ -82,22 +85,21 @@
       <label for="floatingAmount">Amount</label>
     </div>
     {#if isLoading}
-    <LoaderDark />
+      <LoaderDark />
     {:else}
-    <button class="btn btn-primary" on:click={transferTokens}>
-      Transfer
-    </button>
+      <button class="btn btn-primary" on:click={transferTokens}>
+        Transfer
+      </button>
     {/if}
   </div>
 </div>
 
 <style>
-
-.alert {
-  right: 10vw;
-  top: -30vh;
-  position: absolute;
-}
+  .alert {
+    right: 10vw;
+    top: -30vh;
+    position: absolute;
+  }
   .address {
     font-weight: 700;
     font-size: 24px;
