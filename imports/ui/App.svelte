@@ -1,9 +1,13 @@
 <script>
   import { onMount } from "svelte";
   import { ethers } from "ethers";
+  import { fade } from "svelte/transition";
+
   import MainPage from "./components/MainPage.svelte";
   import NotConnect from "./components/NotConnect.svelte";
   import Loader from "./utils/Loader.svelte";
+  import SuccessMessage from "./utils/SuccessMessage.svelte";
+  import ErrorMessage from "./utils/ErrorMessage.svelte";
 
   let isConnected = false;
   let address = localStorage.getItem("address");
@@ -12,6 +16,15 @@
   let isLoading = false;
   let err;
   let success;
+
+  function formatAddress(words) {
+    if (words.length < 6) {
+      return words;
+    }
+    const start = words.slice(0, 3);
+    const end = words.slice(-4);
+    return `${start}...${end}`;
+  }
 
   async function connectToMetamask() {
     try {
@@ -51,7 +64,6 @@
       localStorage.setItem("address", address);
     }
   }
-
   onMount(async () => {
     if (localStorage.getItem("address") !== null) {
       isConnected = true;
@@ -62,6 +74,20 @@
     }
   });
 </script>
+
+{#if success}
+  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
+    <SuccessMessage {success} />
+  </div>
+{/if}
+
+{#if err}
+  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
+    <ErrorMessage
+      err={err.message || "Error connecting to MetaMask. Please try again."}
+    />
+  </div>
+{/if}
 
 <div class="container">
   <header>
@@ -74,6 +100,9 @@
       />
       {#if isLoading}
         <Loader />
+      {:else if isConnected}
+        <button class="address btn btn-primary">{formatAddress(address)}</button
+        >
       {:else}
         <button class="btn btn-primary" on:click={connectToMetamask}>
           Connect Metamask
@@ -96,5 +125,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .alert {
+    right: 10vw;
+    top: -30vh;
+    position: absolute;
   }
 </style>
