@@ -15,7 +15,7 @@ body {
   background: linear-gradient(132deg, #fc415a, #591bc5, #212335);
   background-size: 400% 400%;
   animation: Gradient 15s ease infinite;
-  position: relative;
+  position: relative!important;
   width: 100%;
   overflow: hidden;
   padding: 0;

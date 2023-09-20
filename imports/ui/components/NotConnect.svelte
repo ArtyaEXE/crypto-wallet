@@ -10,13 +10,12 @@
 <style>
   .text {
     text-align: center;
-    padding: 10px;
-    color: black;
-    background-color: white;
-    border-radius: 5px;
+  }
+  h3 {
+    font-weight: 700;
   }
   .block {
-    margin-top: 15vh;
+    margin-top: 5vh;
     padding: 15px;
   }
 

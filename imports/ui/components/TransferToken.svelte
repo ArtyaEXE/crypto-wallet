@@ -1,6 +1,6 @@
 <script>
   import { ethers } from "ethers";
-  import { TOKEN_ADDRESS, TOKEN_ABI } from "../../api/contract";
+  import { TOKEN_ABI } from "../../api/contract";
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
   import LoaderDark from "../utils/LoaderDark.svelte";
@@ -10,6 +10,7 @@
   export let address;
   export let signer;
   export let provider;
+  let tokenAddress;
   let isLoading = false;
   let err;
   let success;
@@ -20,7 +21,7 @@
   async function transferTokens() {
     try {
       isLoading = true;
-      const token = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider);
+      const token = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
       const tx = await token
         .connect(signer)
         .transfer(to, ethers.utils.parseUnits(amount, 18));
@@ -66,7 +67,17 @@
     <p class="address">Your address: {address}</p>
     <div class="form-floating mb-3">
       <input
-        type="email"
+        type="text"
+        class="form-control"
+        id="floatingAddress"
+        bind:value={tokenAddress}
+        placeholder="Enter token address"
+      />
+      <label for="floatingAddress">Token address</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input
+        type="text"
         class="form-control"
         id="floatingAddress"
         bind:value={to}

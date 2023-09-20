@@ -17,12 +17,9 @@
   let err;
   let success;
 
-  function formatAddress(words) {
-    if (words.length < 6) {
-      return words;
-    }
-    const start = words.slice(0, 3);
-    const end = words.slice(-4);
+  function formatAddress(text) {
+    const start = text.slice(0, 5);
+    const end = text.slice(-3);
     return `${start}...${end}`;
   }
 
@@ -69,7 +66,6 @@
       isConnected = true;
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
-
       window.ethereum.on("accountsChanged", handleAccountsChanged);
     }
   });
@@ -112,7 +108,9 @@
   </header>
   <main>
     {#if isConnected}
-      <MainPage />
+    <div transition:fade={{ delay: 0, duration: 300 }} class="main">
+      <MainPage {address} {provider} {signer}/>
+    </div>
     {:else}
       <NotConnect />
     {/if}
@@ -126,10 +124,9 @@
     justify-content: space-between;
     align-items: center;
   }
-
   .alert {
-    right: 10vw;
-    top: -30vh;
+    right: 0;
+    top: 0;
     position: absolute;
   }
 </style>
