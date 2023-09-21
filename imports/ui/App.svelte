@@ -18,9 +18,7 @@
   let success;
 
   function formatAddress(text) {
-    const start = text.slice(0, 5);
-    const end = text.slice(-3);
-    return `${start}...${end}`;
+    return `${text.slice(0, 5)}...${text.slice(-3)}`;
   }
 
   async function connectToMetamask() {
@@ -47,6 +45,7 @@
       success = "";
     }, 3000);
     isLoading = false;
+    console.log(address);
   }
 
   function handleAccountsChanged(newAccounts) {
@@ -86,7 +85,7 @@
 {/if}
 
 <div class="container">
-  <header>
+  <header class="mb-3">
     <div class="connect">
       <img
         width="64"
@@ -108,11 +107,13 @@
   </header>
   <main>
     {#if isConnected}
-    <div transition:fade={{ delay: 0, duration: 300 }} class="main">
-      <MainPage {address} {provider} {signer}/>
-    </div>
+      <div transition:fade={{ delay: 0, duration: 300 }} class="main">
+        <MainPage {address} {provider} {signer} />
+      </div>
     {:else}
-      <NotConnect />
+      <div transition:fade={{ delay: 0, duration: 300 }} class="main">
+        <NotConnect />
+      </div>
     {/if}
   </main>
   <footer />

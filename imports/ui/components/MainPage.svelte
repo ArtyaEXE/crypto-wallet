@@ -2,18 +2,16 @@
   import TransferToken from "./TransferToken.svelte";
   import SuccessMessage from "../utils/SuccessMessage.svelte";
   import ErrorMessage from "../utils/ErrorMessage.svelte";
+  import AddToken from "./AddToken.svelte";
   import { fade } from "svelte/transition";
-
 
   export let address;
   export let provider;
   export let signer;
-  let err;
-  let success;
-
 </script>
 
-{#if success}
+<AddToken {provider} {address} />
+<!-- {#if success}
   <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
     <SuccessMessage {success} />
   </div>
@@ -28,7 +26,7 @@
 {/if}
 
     <TransferToken {signer} {address} {provider} />
-   
+
 
 <style>
   .alert {
@@ -36,19 +34,4 @@
     top: -30vh;
     position: absolute;
   }
-
-  .container {
-    margin-top: 30vh;
-    justify-content: center;
-  }
-
-  .connect {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  img {
-    margin-bottom: 1rem;
-  }
-</style>
+</style> -->

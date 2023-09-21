@@ -15,7 +15,7 @@
     font-weight: 700;
   }
   .block {
-    margin-top: 5vh;
+    transform: translateY(10vh);
     padding: 15px;
   }
 
