@@ -1,37 +1,18 @@
 <script>
-  import TransferToken from "./TransferToken.svelte";
-  import SuccessMessage from "../utils/SuccessMessage.svelte";
-  import ErrorMessage from "../utils/ErrorMessage.svelte";
   import AddToken from "./AddToken.svelte";
-  import { fade } from "svelte/transition";
+  import TransferToken from "./TransferToken.svelte";
+  import { selectedToken } from "/imports/api/selectToken";
 
   export let address;
   export let provider;
   export let signer;
+  let tokens = [];
+
+  $: selected = $selectedToken;
 </script>
 
-<AddToken {provider} {address} />
-<!-- {#if success}
-  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
-    <SuccessMessage {success} />
-  </div>
+<AddToken {provider} {address} {tokens} />
+
+{#if selected}
+  <TransferToken {selected} {provider} {signer} {address} />
 {/if}
-
-{#if err}
-  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
-    <ErrorMessage
-      err={err.message || "Error connecting to MetaMask. Please try again."}
-    />
-  </div>
-{/if}
-
-    <TransferToken {signer} {address} {provider} />
-
-
-<style>
-  .alert {
-    right: 10vw;
-    top: -30vh;
-    position: absolute;
-  }
-</style> -->

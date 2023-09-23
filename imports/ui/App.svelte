@@ -45,7 +45,7 @@
       success = "";
     }, 3000);
     isLoading = false;
-    console.log(address);
+    location.reload();
   }
 
   function handleAccountsChanged(newAccounts) {
@@ -55,6 +55,7 @@
       localStorage.removeItem("address");
       provider = undefined;
       signer = undefined;
+      location.reload();
     } else {
       address = newAccounts[0];
       localStorage.setItem("address", address);
@@ -107,11 +108,11 @@
   </header>
   <main>
     {#if isConnected}
-      <div transition:fade={{ delay: 0, duration: 300 }} class="main">
+      <div transition:fade={{ delay: 300, duration: 300 }} class="main">
         <MainPage {address} {provider} {signer} />
       </div>
     {:else}
-      <div transition:fade={{ delay: 0, duration: 300 }} class="main">
+      <div transition:fade={{ delay: 0, duration: 0 }} class="main">
         <NotConnect />
       </div>
     {/if}
