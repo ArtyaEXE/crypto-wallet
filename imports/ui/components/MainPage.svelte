@@ -14,5 +14,5 @@
 <AddToken {provider} {address} {tokens} />
 
 {#if selected}
-  <TransferToken {selected} {provider} {signer} {address} />
+  <TransferToken {selected} {provider} {signer} />
 {/if}

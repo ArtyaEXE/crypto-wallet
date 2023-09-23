@@ -5,10 +5,12 @@
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import LoaderDark from "../utils/LoaderDark.svelte";
+  import TokenList from "./TokenList.svelte";
 
   export let provider;
   export let address;
   export let tokens;
+
   let tokenAddresses = JSON.parse(localStorage.getItem("tokenAddresses")) || [];
   let tokenAddress;
   let isLoading = false;
@@ -56,16 +58,6 @@
     }
   }
 
-  function removeToken(token) {
-    const updatedTokens = tokens.filter((t) => t.address !== token.address);
-    tokens = updatedTokens;
-    localStorage.setItem("tokens", JSON.stringify(updatedTokens));
-  }
-
-  function selectToken(token) {
-    selectedToken.set(token);
-  }
-
   onMount(() => {
     tokenAddresses.forEach((address) => {
       loadTokenData(address);
@@ -92,33 +84,7 @@
 </div>
 
 <div class="token-list mb-3">
-  {#each tokens as token}
-    {#if tokens}
-      <div transition:fade={{ delay: 0, duration: 300 }} class="token">
-        <div class="card">
-          <div class="card-body">
-            <span class="name">{token.name}</span>
-            <br />
-            <span class="symbol">{token.symbol}</span>
-            <br />
-            <span class="balance">Balance: {token.balance} {token.symbol}</span>
-            <button class="btn remove" on:click={removeToken(token)}
-              ><img src="/images/cross.png" alt="" /></button
-            >
-            <br />
-            {#if $selectedToken !== token}
-              <button
-                class="btn btn-success select"
-                on:click={() => selectToken(token)}>Select</button
-              >
-            {:else}
-              <span class="selected" style="color: green;">Selected</span>
-            {/if}
-          </div>
-        </div>
-      </div>
-    {/if}
-  {/each}
+  <TokenList {tokens} />
 </div>
 
 <style>
@@ -143,30 +109,8 @@
     color: #212529;
   }
 
-  .token {
-    position: relative;
-    transition: all 0.2s ease;
-    overflow: hidden;
-    min-width: 170px;
-  }
-
-  .remove {
-    position: absolute;
-    padding: 10px;
-    right: 0;
-    top: 0;
-  }
-
   img {
     width: 20px;
     height: 20px;
-  }
-
-  .name {
-    font-weight: 500;
-  }
-
-  .balance {
-    font-weight: 700;
   }
 </style>

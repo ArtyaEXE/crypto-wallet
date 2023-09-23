@@ -6,7 +6,6 @@
   export let selected;
   export let signer;
   export let provider;
-  export let address;
 
   let isLoading = false;
   let to;
