@@ -2,10 +2,12 @@
   import { ethers } from "ethers";
   import { TOKEN_ABI } from "../../api/contract";
   import LoaderDark from "../utils/LoaderDark.svelte";
+  import { selectedToken } from "/imports/api/selectToken";
 
   export let selected;
   export let signer;
   export let provider;
+  export let tokens;
 
   let isLoading = false;
   let to;
@@ -24,7 +26,7 @@
     }
     to = "";
     amount = "";
-    isLoading = false;
+    selectedToken.set(null);
     setTimeout(() => {
       location.reload();
     }, 100);

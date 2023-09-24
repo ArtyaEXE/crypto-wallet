@@ -1,8 +1,6 @@
 <script>
   import { ethers } from "ethers";
   import { TOKEN_ABI } from "/imports/api/contract";
-  import { selectedToken } from "/imports/api/selectToken";
-  import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import LoaderDark from "../utils/LoaderDark.svelte";
   import TokenList from "./TokenList.svelte";
@@ -13,11 +11,11 @@
 
   let tokenAddresses = JSON.parse(localStorage.getItem("tokenAddresses")) || [];
   let tokenAddress;
-  let isLoading = false;
+  let isLoadingToken = false;
 
   async function loadTokenData(tokenAddress) {
     try {
-      isLoading = true;
+      isLoadingToken = true;
       const token = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
       const name = await token.name();
       const symbol = await token.symbol();
@@ -35,7 +33,7 @@
     } catch (error) {
       console.error("Error loading token data:", error);
     }
-    isLoading = false;
+    isLoadingToken = false;
   }
 
   async function addToken() {
@@ -75,7 +73,7 @@
   />
   <label for="floatingAddress">Token address</label>
   <button class="btn search" on:click={addToken}>
-    {#if isLoading}
+    {#if isLoadingToken}
       <LoaderDark />
     {:else}
       <img src="/images/search.png" alt="" />

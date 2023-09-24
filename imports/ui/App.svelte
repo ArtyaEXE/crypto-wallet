@@ -6,6 +6,7 @@
   import MainPage from "./components/MainPage.svelte";
   import NotConnect from "./components/NotConnect.svelte";
   import Loader from "./utils/Loader.svelte";
+  import LoadingPage from "./components/LoadingPage.svelte";
   import SuccessMessage from "./utils/SuccessMessage.svelte";
   import ErrorMessage from "./utils/ErrorMessage.svelte";
 
@@ -14,6 +15,7 @@
   let provider;
   let signer;
   let isLoading = false;
+  let isChecked = true;
   let err;
   let success;
 
@@ -45,7 +47,6 @@
       success = "";
     }, 3000);
     isLoading = false;
-    location.reload();
   }
 
   function handleAccountsChanged(newAccounts) {
@@ -62,11 +63,14 @@
     }
   }
   onMount(async () => {
-    if (localStorage.getItem("address") !== null) {
+    const savedAddress = localStorage.getItem("address");
+    if (savedAddress !== null) {
       isConnected = true;
+      address = savedAddress;
       provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
       window.ethereum.on("accountsChanged", handleAccountsChanged);
+      isChecked = false;
     }
   });
 </script>
@@ -84,41 +88,47 @@
     />
   </div>
 {/if}
-
-<div class="container">
-  <header class="mb-3">
-    <div class="connect">
-      <img
-        width="64"
-        height="64"
-        src="https://img.icons8.com/nolan/64/metamask-logo.png"
-        alt="metamask-logo"
-      />
-      {#if isLoading}
-        <Loader />
-      {:else if isConnected}
-        <button class="address btn btn-primary">{formatAddress(address)}</button
-        >
+{#if isChecked}
+  <div transition:fade={{ delay: 300, duration: 300 }}>
+    <LoadingPage />
+  </div>
+{:else}
+  <div class="container">
+    <header class="mb-3">
+      <div class="connect">
+        <img
+          width="64"
+          height="64"
+          src="https://img.icons8.com/nolan/64/metamask-logo.png"
+          alt="metamask-logo"
+        />
+        {#if isLoading}
+          <Loader />
+        {:else if isConnected}
+          <button class="address btn btn-primary"
+            >{formatAddress(address)}</button
+          >
+        {:else}
+          <button class="btn btn-primary" on:click={connectToMetamask}>
+            Connect Metamask
+          </button>
+        {/if}
+      </div>
+    </header>
+    <main>
+      {#if isConnected}
+        <div transition:fade={{ delay: 300, duration: 300 }} class="main">
+          <MainPage {address} {provider} {signer} />
+        </div>
       {:else}
-        <button class="btn btn-primary" on:click={connectToMetamask}>
-          Connect Metamask
-        </button>
+        <div transition:fade={{ delay: 0, duration: 0 }} class="main">
+          <NotConnect />
+        </div>
       {/if}
-    </div>
-  </header>
-  <main>
-    {#if isConnected}
-      <div transition:fade={{ delay: 300, duration: 300 }} class="main">
-        <MainPage {address} {provider} {signer} />
-      </div>
-    {:else}
-      <div transition:fade={{ delay: 0, duration: 0 }} class="main">
-        <NotConnect />
-      </div>
-    {/if}
-  </main>
-  <footer />
-</div>
+    </main>
+    <footer />
+  </div>
+{/if}
 
 <style>
   .connect {

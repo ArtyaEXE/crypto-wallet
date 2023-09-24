@@ -1,4 +1,5 @@
 <script>
+  import { fade } from "svelte/transition";
   import AddToken from "./AddToken.svelte";
   import TransferToken from "./TransferToken.svelte";
   import { selectedToken } from "/imports/api/selectToken";
@@ -6,6 +7,7 @@
   export let address;
   export let provider;
   export let signer;
+
   let tokens = [];
 
   $: selected = $selectedToken;
@@ -14,5 +16,7 @@
 <AddToken {provider} {address} {tokens} />
 
 {#if selected}
-  <TransferToken {selected} {provider} {signer} />
+  <div transition:fade={{ delay: 100, duration: 300 }}>
+    <TransferToken {selected} {provider} {signer} {tokens} />
+  </div>
 {/if}

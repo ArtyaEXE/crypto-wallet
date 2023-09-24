@@ -1,12 +1,19 @@
 <script>
   import { fade } from "svelte/transition";
   import { selectedToken } from "/imports/api/selectToken";
+
+  let tokenAddresses = JSON.parse(localStorage.getItem("tokenAddresses")) || [];
+
   export let tokens;
 
   function removeToken(token) {
     const updatedTokens = tokens.filter((t) => t.address !== token.address);
     tokens = updatedTokens;
-    localStorage.setItem("tokens", JSON.stringify(updatedTokens));
+
+    tokenAddresses = tokenAddresses.filter(
+      (address) => address !== token.address
+    );
+    localStorage.setItem("tokenAddresses", JSON.stringify(tokenAddresses));
   }
 
   function selectToken(token) {
