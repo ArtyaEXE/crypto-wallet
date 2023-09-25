@@ -13,6 +13,7 @@
   let isConnected = false;
   let address = localStorage.getItem("address");
   let provider;
+  let network;
   let signer;
   let isLoading = false;
   let isChecked = true;
@@ -28,6 +29,7 @@
       isLoading = true;
       provider = new ethers.providers.Web3Provider(window.ethereum);
       address = await provider.send("eth_requestAccounts", []);
+      network = await provider.getNetwork();
       isConnected = true;
       localStorage.setItem("address", address);
       signer = provider.getSigner();
@@ -56,7 +58,6 @@
       localStorage.removeItem("address");
       provider = undefined;
       signer = undefined;
-      location.reload();
     } else {
       address = newAccounts[0];
       localStorage.setItem("address", address);
@@ -68,8 +69,11 @@
       isConnected = true;
       address = savedAddress;
       provider = new ethers.providers.Web3Provider(window.ethereum);
+      network = await provider.getNetwork();
       signer = provider.getSigner();
       window.ethereum.on("accountsChanged", handleAccountsChanged);
+      isChecked = false;
+    } else {
       isChecked = false;
     }
   });
@@ -105,6 +109,9 @@
         {#if isLoading}
           <Loader />
         {:else if isConnected}
+          <span class="network"
+            >Network: {network.name}<br />Chain: {network.chainId}</span
+          >
           <button class="address btn btn-primary"
             >{formatAddress(address)}</button
           >
@@ -140,5 +147,11 @@
     right: 0;
     top: 0;
     position: absolute;
+  }
+
+  .network {
+    font-weight: 500;
+    font-size: 14px;
+    margin: 0;
   }
 </style>

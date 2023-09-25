@@ -7,7 +7,6 @@
   export let selected;
   export let signer;
   export let provider;
-  export let tokens;
 
   let isLoading = false;
   let to;

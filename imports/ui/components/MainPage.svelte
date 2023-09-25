@@ -9,7 +9,6 @@
   export let signer;
 
   let tokens = [];
-
   $: selected = $selectedToken;
 </script>
 
@@ -17,6 +16,6 @@
 
 {#if selected}
   <div transition:fade={{ delay: 100, duration: 300 }}>
-    <TransferToken {selected} {provider} {signer} {tokens} />
+    <TransferToken {selected} {provider} {signer} />
   </div>
 {/if}
