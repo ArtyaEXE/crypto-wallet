@@ -11,87 +11,79 @@
   export let provider;
   export let address;
   export let tokens;
+  export let chainId;
 
-  let err;
-  let success;
   let tokenAddresses = JSON.parse(localStorage.getItem("tokenAddresses")) || [];
   let tokenAddress;
-  let isLoadingToken = false;
+  let isLoading = false;
+  let err;
+  let success;
 
-  async function loadTokenData(tokenAddress) {
+  async function loadTokenData(tokenAddress, tokenChain) {
     try {
+      isLoading = true;
       const token = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
       const name = await token.name();
       const symbol = await token.symbol();
       const balanceBN = await token.balanceOf(address);
       const balance = ethers.utils.formatUnits(balanceBN, 18);
 
-      const network = await provider.getNetwork(address);
-      const chainId = network.chainId;
-
       const newToken = {
         address: tokenAddress,
         name,
         symbol,
         balance,
-        chain: chainId,
+        chain: tokenChain,
       };
 
       tokens = [...tokens, newToken];
-    } catch (error) {
-      console.error("Error loading token data:", error);
-      err = "Some added tokens will not be visible on this network";
-      setTimeout(() => {
-        err = "";
-      }, 5000);
+      console.log(tokens);
+    } catch (err) {
+      console.error(err);
     }
+    isLoading = false;
   }
 
   async function addToken() {
     try {
-      isLoadingToken = true;
       const trimmedTokenAddress = tokenAddress.trim();
       if (!trimmedTokenAddress) return;
 
-      const addressExists = tokenAddresses.some(
-        (token) => token.address === trimmedTokenAddress
+      const tokenExists = tokenAddresses.some(
+        (token) =>
+          token.address === trimmedTokenAddress && token.chain === chainId
       );
 
-      if (!addressExists) {
-        const network = await provider.getNetwork();
-        const chainId = network.chainId;
-
-        const tokenLS = {
+      if (!tokenExists) {
+        tokenAddresses.push({
           address: trimmedTokenAddress,
           chain: chainId,
-        };
-
-        tokenAddresses.push(tokenLS);
+        });
         localStorage.setItem("tokenAddresses", JSON.stringify(tokenAddresses));
         tokenAddress = "";
 
-        await loadTokenData(trimmedTokenAddress);
-
+        loadTokenData(trimmedTokenAddress, chainId);
         success = `Token added to chain ${chainId}`;
       } else {
-        err = "Token address already exists";
+        err = "Token address already exists in this chain";
         tokenAddress = "";
         setTimeout(() => {
           err = "";
         }, 5000);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.error(err);
     }
-    isLoadingToken = false;
     setTimeout(() => {
       success = "";
-    }, 5000);
+    }, 3000);
   }
 
   onMount(async () => {
-    tokenAddresses.forEach((address) => {
-      loadTokenData(address.address);
+    tokenAddresses.forEach((token) => {
+      if (token.chain === chainId) {
+        loadTokenData(token.address, token.chain);
+      }
     });
   });
 </script>
@@ -118,7 +110,7 @@
   />
   <label for="floatingAddress">Token address</label>
   <button class="btn search" on:click={addToken}>
-    {#if isLoadingToken}
+    {#if isLoading}
       <LoaderDark />
     {:else}
       <img src="/images/search.png" alt="" />

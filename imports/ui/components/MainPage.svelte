@@ -7,12 +7,13 @@
   export let address;
   export let provider;
   export let signer;
+  export let chainId;
 
   let tokens = [];
   $: selected = $selectedToken;
 </script>
 
-<AddToken {provider} {address} {tokens} />
+<AddToken {provider} {address} {tokens} {chainId} />
 
 {#if selected}
   <div transition:fade={{ delay: 100, duration: 300 }}>

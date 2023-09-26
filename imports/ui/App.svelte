@@ -14,6 +14,7 @@
   let address = localStorage.getItem("address");
   let provider;
   let network;
+  let chainId;
   let signer;
   let isLoading = false;
   let isChecked = true;
@@ -30,6 +31,7 @@
       provider = new ethers.providers.Web3Provider(window.ethereum);
       address = await provider.send("eth_requestAccounts", []);
       network = await provider.getNetwork();
+      chainId = network.chainId;
       isConnected = true;
       localStorage.setItem("address", address);
       signer = provider.getSigner();
@@ -70,6 +72,7 @@
       address = savedAddress;
       provider = new ethers.providers.Web3Provider(window.ethereum);
       network = await provider.getNetwork();
+      chainId = network.chainId;
       signer = provider.getSigner();
       window.ethereum.on("accountsChanged", handleAccountsChanged);
       isChecked = false;
@@ -125,7 +128,7 @@
     <main>
       {#if isConnected}
         <div transition:fade={{ delay: 300, duration: 300 }} class="main">
-          <MainPage {address} {provider} {signer} />
+          <MainPage {address} {provider} {signer} {chainId} />
         </div>
       {:else}
         <div transition:fade={{ delay: 0, duration: 0 }} class="main">
