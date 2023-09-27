@@ -73,16 +73,22 @@
       localStorage.setItem("address", address);
     }
   }
+
   onMount(async () => {
     const savedAddress = localStorage.getItem("address");
     if (savedAddress !== null) {
       isConnected = true;
       address = savedAddress;
-      provider = new ethers.providers.Web3Provider(window.ethereum);
+      provider = new ethers.providers.Web3Provider(window.ethereum, "any");
       network = await provider.getNetwork();
       chainId = network.chainId;
       signer = provider.getSigner();
       window.ethereum.on("accountsChanged", handleAccountsChanged);
+      provider.on("network", async (newNetwork, oldNetwork) => {
+        if (oldNetwork) {
+          window.location.reload();
+        }
+      });
       isChecked = false;
     } else {
       isChecked = false;
