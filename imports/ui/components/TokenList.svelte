@@ -2,8 +2,7 @@
   import { fade } from "svelte/transition";
   import { selectedToken } from "/imports/api/selectToken";
 
-  let tokenAddresses = JSON.parse(localStorage.getItem("tokenAddresses")) || [];
-
+  export let tokenAddresses;
   export let tokens;
 
   function removeToken(token) {
@@ -11,11 +10,11 @@
     tokens = updatedTokens;
 
     tokenAddresses = tokenAddresses.filter(
-      (address) => address !== token.address
+      (address) =>
+        address.address !== token.address || address.chain !== token.chain
     );
     localStorage.setItem("tokenAddresses", JSON.stringify(tokenAddresses));
   }
-
   function selectToken(token) {
     selectedToken.set(token);
   }

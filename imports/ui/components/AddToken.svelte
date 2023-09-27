@@ -37,7 +37,6 @@
       };
 
       tokens = [...tokens, newToken];
-      console.log(tokens);
     } catch (err) {
       console.error(err);
     }
@@ -119,7 +118,7 @@
 </div>
 
 <div class="token-list mb-3">
-  <TokenList {tokens} />
+  <TokenList {tokens} {tokenAddresses} />
 </div>
 
 <style>

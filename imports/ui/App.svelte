@@ -29,7 +29,15 @@
     try {
       isLoading = true;
       provider = new ethers.providers.Web3Provider(window.ethereum);
-      address = await provider.send("eth_requestAccounts", []);
+
+      const savedAddress = localStorage.getItem("address");
+      if (savedAddress) {
+        address = savedAddress;
+      } else {
+        const newAccounts = await provider.send("eth_requestAccounts", []);
+        address = newAccounts[0];
+        localStorage.setItem("address", address);
+      }
       network = await provider.getNetwork();
       chainId = network.chainId;
       isConnected = true;
