@@ -10,10 +10,10 @@
   import SuccessMessage from "./utils/SuccessMessage.svelte";
   import ErrorMessage from "./utils/ErrorMessage.svelte";
 
-  let isConnected = false;
-  let address = localStorage.getItem("address");
-  let provider;
+  $: address = localStorage.getItem("address");
   let network;
+  let isConnected = false;
+  let provider;
   let chainId;
   let signer;
   let isLoading = false;
@@ -74,6 +74,14 @@
     }
   }
 
+  async function handleNetworkChange(newNetwork, oldNetwork) {
+    const savedAddress = localStorage.getItem("address");
+    if (oldNetwork) {
+      address = savedAddress;
+      window.location.reload();
+    }
+  }
+
   onMount(async () => {
     const savedAddress = localStorage.getItem("address");
     if (savedAddress !== null) {
@@ -84,11 +92,8 @@
       chainId = network.chainId;
       signer = provider.getSigner();
       window.ethereum.on("accountsChanged", handleAccountsChanged);
-      provider.on("network", async (newNetwork, oldNetwork) => {
-        if (oldNetwork) {
-          window.location.reload();
-        }
-      });
+      provider.on("network", handleNetworkChange);
+      window.ethereum.on("network", handleNetworkChange);
       isChecked = false;
     } else {
       isChecked = false;
