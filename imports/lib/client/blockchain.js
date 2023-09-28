@@ -1,6 +1,8 @@
 import {ethers} from 'ethers';
 import {writable} from 'svelte/store';
-import { ReactiveVar } from 'meteor/reactive-var'
+import { ReactiveVar } from 'meteor/reactive-var';
+import { Tracker } from 'meteor/tracker';
+import { Meteor } from 'meteor/meteor';
 
 // Current active provider
 let provider = null;
@@ -62,12 +64,22 @@ async function enable()
         provider = null;
     }
 
-    provider.provider.on('accountsChanged', accountsChanged);
+    provider.on('accountsChanged', accountsChanged);
 
     const signer = provider.getSigner();
     const address = await signer.getAddress();
     accountsChanged([address]);
+    console.log(address)
 }
+
+Meteor.startup(()=>
+{	
+	Tracker.autorun(()=>
+	{
+		const chain = rChainId.get();
+		const address = rAddress.get();
+	});
+});
 
 export const Blockchain = {
     rChainId,
