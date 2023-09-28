@@ -1,120 +1,13 @@
 <script>
-  import { onMount } from "svelte";
-  import { ethers } from "ethers";
-  import { fade } from "svelte/transition";
+import { BC, sAddress } from "../lib/client/blockchain";
 
-  import MainPage from "./components/MainPage.svelte";
-  import NotConnect from "./components/NotConnect.svelte";
-  import Loader from "./utils/Loader.svelte";
-  import LoadingPage from "./components/LoadingPage.svelte";
-  import SuccessMessage from "./utils/SuccessMessage.svelte";
-  import ErrorMessage from "./utils/ErrorMessage.svelte";
-
-  $: address = localStorage.getItem("address");
-  let network;
-  let isConnected = false;
-  let provider;
-  let chainId;
-  let signer;
-  let isLoading = false;
-  let isChecked = true;
-  let err;
-  let success;
 
   function formatAddress(text) {
     return `${text.slice(0, 5)}...${text.slice(-3)}`;
   }
-
-  async function connectToMetamask() {
-    try {
-      isLoading = true;
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-
-      const savedAddress = localStorage.getItem("address");
-      if (savedAddress) {
-        address = savedAddress;
-      } else {
-        const newAccounts = await provider.send("eth_requestAccounts", []);
-        address = newAccounts[0];
-        localStorage.setItem("address", address);
-      }
-      network = await provider.getNetwork();
-      chainId = network.chainId;
-      isConnected = true;
-      localStorage.setItem("address", address);
-      signer = provider.getSigner();
-
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-      success = "Connected to MetaMask successfully";
-    } catch (error) {
-      err = error;
-      if (err.code === -32002) {
-        err.message = "Check MetaMask and try again";
-      }
-      setTimeout(() => {
-        err = "";
-      }, 3000);
-    }
-    setTimeout(() => {
-      success = "";
-    }, 3000);
-    isLoading = false;
-  }
-
-  function handleAccountsChanged(newAccounts) {
-    if (newAccounts.length === 0) {
-      isConnected = false;
-      address = undefined;
-      localStorage.removeItem("address");
-      provider = undefined;
-      signer = undefined;
-    } else {
-      address = newAccounts[0];
-      localStorage.setItem("address", address);
-    }
-  }
-
-  async function handleNetworkChange(newNetwork, oldNetwork) {
-    const savedAddress = localStorage.getItem("address");
-    if (oldNetwork) {
-      address = savedAddress;
-      window.location.reload();
-    }
-  }
-
-  onMount(async () => {
-    const savedAddress = localStorage.getItem("address");
-    if (savedAddress !== null) {
-      isConnected = true;
-      address = savedAddress;
-      provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-      network = await provider.getNetwork();
-      chainId = network.chainId;
-      signer = provider.getSigner();
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-      provider.on("network", handleNetworkChange);
-      window.ethereum.on("network", handleNetworkChange);
-      isChecked = false;
-    } else {
-      isChecked = false;
-    }
-  });
 </script>
 
-{#if success}
-  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
-    <SuccessMessage {success} />
-  </div>
-{/if}
-
-{#if err}
-  <div transition:fade={{ delay: 0, duration: 300 }} class="alert">
-    <ErrorMessage
-      err={err.message || "Error connecting to MetaMask. Please try again."}
-    />
-  </div>
-{/if}
-{#if isChecked}
+<!-- {#if isChecked}
   <div transition:fade={{ delay: 300, duration: 300 }}>
     <LoadingPage />
   </div>
@@ -138,9 +31,6 @@
             >{formatAddress(address)}</button
           >
         {:else}
-          <button class="btn btn-primary" on:click={connectToMetamask}>
-            Connect Metamask
-          </button>
         {/if}
       </div>
     </header>
@@ -157,8 +47,11 @@
     </main>
     <footer />
   </div>
-{/if}
-
+  {/if} -->
+  <button class="btn btn-primary" on:click={()=> BC.enable()}>
+    Connect Metamask
+  </button>
+  
 <style>
   .connect {
     display: flex;
