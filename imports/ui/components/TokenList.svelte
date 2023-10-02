@@ -1,78 +1,62 @@
 <script>
-  import { fade } from "svelte/transition";
-  import { selectedToken } from "/imports/api/selectToken";
+  import { sTokens, sFalseTokens } from "/imports/lib/client/blockchain";
+  import TokenItem from "./TokenItem.svelte";
+  import FalseToken from "./FalseToken.svelte";
 
-  export let tokenAddresses;
-  export let tokens;
+  let showAvailable = false;
+  let showUnavailable = false;
 
-  function removeToken(token) {
-    const updatedTokens = tokens.filter((t) => t.address !== token.address);
-    tokens = updatedTokens;
-
-    tokenAddresses = tokenAddresses.filter(
-      (address) =>
-        address.address !== token.address || address.chain !== token.chain
-    );
-    localStorage.setItem("tokenAddresses", JSON.stringify(tokenAddresses));
+  function showAvailableTokens() {
+    showAvailable = true;
+    showUnavailable = false;
   }
-  function selectToken(token) {
-    selectedToken.set(token);
+
+  function showUnavailableTokens() {
+    showAvailable = false;
+    showUnavailable = true;
   }
 </script>
 
-{#each tokens as token}
-  {#if tokens}
-    <div transition:fade={{ delay: 0, duration: 300 }} class="token">
-      <div class="card">
-        <div class="card-body">
-          <span class="name">{token.name}</span>
-          <br />
-          <span class="symbol">{token.symbol}</span>
-          <br />
-          <span class="balance">Balance: {token.balance} {token.symbol}</span>
-          <button class="btn remove" on:click={removeToken(token)}
-            ><img src="/images/cross.png" alt="" /></button
-          >
-          <br />
-          {#if $selectedToken !== token}
-            <button
-              class="btn btn-success select"
-              on:click={() => selectToken(token)}>Select</button
-            >
-          {:else}
-            <span class="selected" style="color: green;">Selected</span>
-          {/if}
-        </div>
-      </div>
-    </div>
+<div class="button-group">
+  <button class="btn btn-primary" on:click={showAvailableTokens}
+    >Available tokens <span class="number">{$sTokens.length}</span></button
+  >
+  <button class="btn btn-primary" on:click={showUnavailableTokens}
+    >Not available tokens<span class="number">{$sFalseTokens.length}</span
+    ></button
+  >
+</div>
+
+<div class="card-container">
+  {#if showAvailable}
+    {#each $sTokens as token}
+      <TokenItem {token} />
+    {/each}
   {/if}
-{/each}
+  {#if showUnavailable}
+    {#each $sFalseTokens as falseToken}
+      <FalseToken {falseToken} />
+    {/each}
+  {/if}
+</div>
 
 <style>
-  .token {
-    position: relative;
-    transition: all 0.2s ease;
-    overflow: hidden;
-    min-width: 170px;
-  }
-
-  .remove {
+  .number {
     position: absolute;
-    padding: 10px;
-    right: 0;
-    top: 0;
+    padding: 0 5px 0 5px;
+    border-radius: 50%;
+    background-color: #d14949;
+    right: -8px;
+    top: -8px;
+    font-size: 12px;
+  }
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .name {
-    font-weight: 500;
-  }
-
-  .balance {
-    font-weight: 700;
-  }
-
-  img {
-    width: 20px;
-    height: 20px;
+  .btn {
+    position: relative;
   }
 </style>

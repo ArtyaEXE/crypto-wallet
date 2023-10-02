@@ -17,6 +17,7 @@
   .block {
     transform: translateY(10vh);
     padding: 15px;
+    transition: all 0.3s ease;
   }
 
   .block-body {
