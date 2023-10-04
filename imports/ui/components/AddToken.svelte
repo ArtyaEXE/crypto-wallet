@@ -5,7 +5,7 @@
   let tokenAddress;
 </script>
 
-<div class="form-floating mb-3 add-token">
+<div class="form-floating mb-4 add-token">
   <input
     type="text"
     class="form-control"

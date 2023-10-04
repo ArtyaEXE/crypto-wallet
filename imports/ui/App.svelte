@@ -6,9 +6,14 @@
   import MainPage from "./components/MainPage.svelte";
   import Loader from "./utils/Loader.svelte";
 
+  let copyed = false;
   function handleCopyAddress() {
     if ($sAddress) {
       copyToClipboard($sAddress);
+      copyed = true;
+      setTimeout(() => {
+        copyed = false;
+      }, 3000);
     }
   }
 
@@ -36,8 +41,12 @@
         title="Copy address"
       >
         {formatText($sAddress)}
-        <img class="copy" src="/images/copy.png" alt="" /></button
-      >
+        {#if !copyed}
+          <span class="material-symbols-outlined">content_copy</span>
+        {:else}
+          <span class="material-symbols-outlined"> done </span>
+        {/if}
+      </button>
     {:else if isLoading}
       <Loader />
     {:else}

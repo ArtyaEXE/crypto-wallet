@@ -1,8 +1,6 @@
 import { ethers } from "ethers";
 import { writable } from "svelte/store";
 import { ReactiveVar } from "meteor/reactive-var";
-import { Tracker } from "meteor/tracker";
-import { Meteor } from "meteor/meteor";
 import { TOKEN_ABI } from "../../api/contract";
 
 // Current active provider
@@ -20,6 +18,14 @@ function chainChanged(chain) {
   rChainId.set(chain);
   if (chain) {
     console.log("Blockchain connected, chain: " + chain);
+    addedTokens = [];
+    rTokens.set(addedTokens);
+    sTokens.set(addedTokens);
+    tokens.forEach((token) => {
+      if (token.chain === chain) {
+        loadTokenData(token.address);
+      }
+    });
   } else console.log("Blockchain disconnected");
 }
 
@@ -59,22 +65,12 @@ async function enable() {
   const accounts = await provider.send("eth_requestAccounts", []);
   const address = await signer.getAddress();
   accountsChanged([address]);
-
-  await tokens.forEach((token) => {
-    if (token.chain === rChainId.curValue) {
-      loadTokenData(token.address);
-    }
-  });
 }
 
 export const sTokens = writable([]);
 const rTokens = new ReactiveVar([]);
-const addedTokens = [];
+let addedTokens = [];
 let tokens = JSON.parse(localStorage.getItem("tokens")) || [];
-
-export const sFalseTokens = writable([]);
-const rFalseTokens = new ReactiveVar([]);
-const falseTokens = [];
 
 async function addToken(tokenAddress) {
   try {
@@ -112,12 +108,6 @@ async function loadTokenData(tokenAddress) {
     rTokens.set(addedTokens);
   } catch (ex) {
     console.log(ex);
-    const newToken = {
-      address: tokenAddress,
-    };
-    falseTokens.push(newToken);
-    sFalseTokens.set(falseTokens);
-    rFalseTokens.set(falseTokens);
   }
 }
 

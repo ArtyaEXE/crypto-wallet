@@ -10,8 +10,14 @@
   }
 }
 
+html,
 body {
-  height: 100vh;
+  position: relative;
+  height: 100%;
+}
+
+body {
+  height: 100%;
   background: linear-gradient(132deg, #fc415a, #591bc5, #212335);
   background-size: 400% 400%;
   animation: Gradient 15s ease infinite;
@@ -27,6 +33,15 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+button {
+  padding: 0;
+  border: none;
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .text-default {
