@@ -4,7 +4,7 @@ import { ReactiveVar } from "meteor/reactive-var";
 import { TOKEN_ABI } from "../../api/contract";
 
 // Current active provider
-let provider = null;
+export let provider = null;
 
 //Detect chain ID
 // sChainId = svelte chain ID
@@ -67,6 +67,7 @@ async function enable() {
   accountsChanged([address]);
 }
 
+// Add tokens
 export const sTokens = writable([]);
 const rTokens = new ReactiveVar([]);
 let addedTokens = [];
@@ -89,25 +90,68 @@ async function addToken(tokenAddress) {
     console.error(ex);
   }
 }
-
+// Load token info
 async function loadTokenData(tokenAddress) {
   try {
-    const token = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
-    const name = await token.name();
-    const symbol = await token.symbol();
-    const balanceBN = await token.balanceOf(address);
+    const newToken = await getTokenInfo(tokenAddress);
+    if (newToken) {
+      addToTokens(newToken);
+    }
+  } catch (ex) {
+    console.log(ex);
+  }
+}
+
+async function getTokenInfo(tokenAddress) {
+  try {
+    const contract = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
+    const name = await contract.name();
+    const symbol = await contract.symbol();
+    const balanceBN = await contract.balanceOf(address);
     const balance = ethers.utils.formatUnits(balanceBN, 18);
-    const newToken = {
+    return {
       address: tokenAddress,
       name,
       symbol,
       balance,
     };
-    addedTokens.push(newToken);
-    sTokens.set(addedTokens);
-    rTokens.set(addedTokens);
   } catch (ex) {
     console.log(ex);
+    return null;
+  }
+}
+
+function addToTokens(newToken) {
+  addedTokens.push(newToken);
+  sTokens.set(addedTokens);
+  rTokens.set(addedTokens);
+}
+
+//Transfer token
+async function transferTokens(contractAddress, toAddress, amount) {
+  try {
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, TOKEN_ABI, signer);
+    const transaction = await contract.transfer(toAddress, amount);
+    await transaction.wait();
+    console.log("Перевод выполнен успешно");
+    const tokenToUpdateIndex = addedTokens.findIndex(
+      (token) => token.address === contractAddress
+    );
+
+    if (tokenToUpdateIndex !== -1) {
+      const tokenToUpdate = addedTokens[tokenToUpdateIndex];
+
+      const balanceBN = await contract.balanceOf(address);
+      tokenToUpdate.balance = ethers.utils.formatUnits(balanceBN, 18);
+
+      addedTokens[tokenToUpdateIndex] = tokenToUpdate;
+      sTokens.set([...addedTokens]);
+      rTokens.set([...addedTokens]);
+    }
+  } catch (ex) {
+    console.error(ex);
+    console.log("Не удалось выполнить перевод");
   }
 }
 
@@ -117,5 +161,6 @@ export const Blockchain = {
 
   enable,
   addToken,
+  transferTokens,
 };
 export const BC = Blockchain;

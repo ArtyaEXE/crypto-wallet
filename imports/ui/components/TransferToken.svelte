@@ -1,8 +1,21 @@
 <script>
+  import { BC } from "/imports/lib/client/blockchain";
+  import LoaderDark from "../utils/LoaderDark.svelte";
   export let token;
+  let to;
   let amount;
   function setMaxAmount() {
     amount = token.balance;
+  }
+
+  let isLoading = false;
+
+  async function handleTransferToken() {
+    isLoading = true;
+    await BC.transferTokens(token.address, to, amount);
+    isLoading = false;
+    to = "";
+    amount = 0;
   }
 </script>
 
@@ -12,6 +25,7 @@
     class="form-control"
     id="floatingAddress"
     placeholder="Destination"
+    bind:value={to}
   />
   <label for="floatingAddress">Destination address</label>
 </div>
@@ -27,7 +41,13 @@
 </div>
 <div class="button-group">
   <button class="btn btn-secondary" on:click={setMaxAmount}>Use Max</button>
-  <button class="btn btn-primary"> Transfer </button>
+  {#if !isLoading}
+    <button class="btn btn-primary" on:click={handleTransferToken}>
+      Transfer
+    </button>
+  {:else}
+    <LoaderDark />
+  {/if}
 </div>
 
 <style>
